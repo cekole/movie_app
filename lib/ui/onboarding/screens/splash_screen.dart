@@ -62,6 +62,10 @@ class _SplashScreenState extends State<SplashScreen>
     if (_viewModel.error == null && _viewModel.isDataLoaded) {
       // Populate HomeViewModel with fetched data
       _populateHomeViewModel();
+
+      // Pre-cache images for offline use
+      await _viewModel.preCacheImages();
+
       widget.onComplete();
     }
   }

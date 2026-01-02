@@ -130,4 +130,26 @@ class MovieRepository {
   Future<void> clearCache() async {
     await _cacheService.clearCache();
   }
+
+  // Movie Detail Cache Methods
+
+  Future<MovieDetail> getMovieDetailsWithCache(int movieId) async {
+    // Check if already cached
+    final cached = await _cacheService.getCachedMovieDetail(movieId);
+    if (cached != null) {
+      return cached;
+    }
+
+    final detail = await getMovieDetails(movieId);
+    await _cacheService.cacheMovieDetail(detail);
+    return detail;
+  }
+
+  Future<void> cacheMovieDetail(MovieDetail detail) async {
+    await _cacheService.cacheMovieDetail(detail);
+  }
+
+  Future<MovieDetail?> getCachedMovieDetail(int movieId) async {
+    return _cacheService.getCachedMovieDetail(movieId);
+  }
 }

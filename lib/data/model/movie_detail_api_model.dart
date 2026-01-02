@@ -126,4 +126,31 @@ class MovieDetailApiModel {
       popularity: popularity,
     );
   }
+
+  /// Create from domain model
+  factory MovieDetailApiModel.fromDomain(MovieDetail detail) {
+    return MovieDetailApiModel(
+      id: detail.id,
+      title: detail.title,
+      posterPath: detail.posterPath,
+      backdropPath: detail.backdropPath,
+      overview: detail.overview,
+      voteAverage: detail.voteAverage,
+      voteCount: detail.voteCount,
+      releaseDate: detail.releaseDate,
+      genres: detail.genres.map((g) => GenreApiModel.fromDomain(g)).toList(),
+      runtime: detail.runtime,
+      tagline: detail.tagline,
+      status: detail.status,
+      budget: detail.budget,
+      revenue: detail.revenue,
+      homepage: detail.homepage,
+      imdbId: detail.imdbId,
+      popularity: detail.popularity,
+      adult: false,
+      originalLanguage: '',
+      originalTitle: detail.title,
+      video: false,
+    );
+  }
 }

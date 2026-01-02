@@ -144,4 +144,31 @@ class CacheService {
     final nowPlaying = await getCachedNowPlayingMovies();
     return genres != null && nowPlaying != null;
   }
+
+  // Movie detail caching methods
+
+  Future<void> cacheMovieDetail(MovieDetail detail) async {
+    final preferences = await prefs;
+    final key = '${AppConfig.cachedMovieDetailsPrefix}${detail.id}';
+    final json = jsonEncode(MovieDetailApiModel.fromDomain(detail).toJson());
+    await preferences.setString(key, json);
+  }
+
+  Future<MovieDetail?> getCachedMovieDetail(int movieId) async {
+    final preferences = await prefs;
+    final key = '${AppConfig.cachedMovieDetailsPrefix}$movieId';
+    final json = preferences.getString(key);
+
+    if (json == null) return null;
+
+    return MovieDetailApiModel.fromJson(
+      jsonDecode(json) as Map<String, dynamic>,
+    ).toDomain();
+  }
+
+  Future<bool> hasMovieDetailCached(int movieId) async {
+    final preferences = await prefs;
+    final key = '${AppConfig.cachedMovieDetailsPrefix}$movieId';
+    return preferences.containsKey(key);
+  }
 }

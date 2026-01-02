@@ -1,9 +1,10 @@
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:go_router/go_router.dart';
+import 'package:movie_app/config/app_config.dart';
 import 'package:movie_app/ui/core/themes/themes.dart';
 
-import '../../core/themes/app_colors.dart';
 import '../../core/ui/ui.dart';
 import '../view_model/view_model.dart';
 import '../widgets/home/home.dart';
@@ -135,7 +136,10 @@ class _HomeScreenState extends State<HomeScreen> {
               return ListView.separated(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),
-                itemCount: allMovies.length > 10 ? 10 : allMovies.length,
+                itemCount:
+                    allMovies.length > AppConfig.forYouMoviesCount
+                        ? AppConfig.forYouMoviesCount
+                        : allMovies.length,
                 separatorBuilder: (context, index) => const SizedBox(width: 16),
                 itemBuilder: (context, index) {
                   final movie = allMovies[index];
@@ -150,13 +154,22 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: ClipOval(
                         child:
                             movie.fullPosterPath != null
-                                ? Image.network(
-                                  movie.fullPosterPath!,
+                                ? CachedNetworkImage(
+                                  imageUrl: movie.fullPosterPath!,
                                   width: 80,
                                   height: 80,
                                   fit: BoxFit.cover,
-                                  errorBuilder:
-                                      (context, error, stackTrace) =>
+                                  placeholder:
+                                      (context, url) => Container(
+                                        color: AppColors.surface,
+                                        child: const Center(
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                          ),
+                                        ),
+                                      ),
+                                  errorWidget:
+                                      (context, url, error) =>
                                           _buildPlaceholder(),
                                 )
                                 : _buildPlaceholder(),
@@ -243,7 +256,9 @@ class _HomeScreenState extends State<HomeScreen> {
                   mainAxisSpacing: 12,
                 ),
                 itemCount:
-                    categoryMovies.length > 9 ? 9 : categoryMovies.length,
+                    categoryMovies.length > AppConfig.categoryMoviesCount
+                        ? AppConfig.categoryMoviesCount
+                        : categoryMovies.length,
                 itemBuilder: (context, index) {
                   final movie = categoryMovies[index];
                   return MovieCard(
