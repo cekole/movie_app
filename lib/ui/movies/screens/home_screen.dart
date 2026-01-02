@@ -30,7 +30,6 @@ class _HomeScreenState extends State<HomeScreen> {
       _sectionKeys[category] = GlobalKey();
     }
     _scrollController.addListener(_onScroll);
-    widget.viewModel.fetchAllCategories();
   }
 
   @override
@@ -93,35 +92,27 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget _buildContent() {
-    return Observer(
-      builder: (_) {
-        if (widget.viewModel.isInitialLoading) {
-          return const LoadingWidget(message: 'Loading movies...');
-        }
-
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Fixed header section
-            _buildHeader(),
-            // Scrollable content
-            Expanded(
-              child: SingleChildScrollView(
-                controller: _scrollController,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    // Build all category sections
-                    for (final category in MovieCategory.values)
-                      _buildCategorySection(category),
-                    const SizedBox(height: 32),
-                  ],
-                ),
-              ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Fixed header section
+        _buildHeader(),
+        // Scrollable content
+        Expanded(
+          child: SingleChildScrollView(
+            controller: _scrollController,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Build all category sections
+                for (final category in MovieCategory.values)
+                  _buildCategorySection(category),
+                const SizedBox(height: 32),
+              ],
             ),
-          ],
-        );
-      },
+          ),
+        ),
+      ],
     );
   }
 
