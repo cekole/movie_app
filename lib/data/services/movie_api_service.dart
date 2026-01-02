@@ -86,4 +86,13 @@ class MovieApiService {
     );
     return MoviesResponseApiModel.fromJson(response.data);
   }
+
+  /// Fetch all movie genres
+  Future<GenresResponseApiModel> getGenres() async {
+    final response = await _dio.get(
+      ApiConfig.genresEndpoint,
+      queryParameters: {'language': ApiConfig.defaultLanguage},
+    );
+    return GenresResponseApiModel.fromJson(response.data);
+  }
 }

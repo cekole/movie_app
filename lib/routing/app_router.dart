@@ -7,7 +7,7 @@ import '../ui/onboarding/onboarding.dart';
 /// App router configuration
 class AppRouter {
   // ViewModels
-  static final HomeViewModel _homeViewModel = HomeViewModel();
+  static final HomeViewModel homeViewModel = HomeViewModel();
   static final MovieDetailViewModel _movieDetailViewModel =
       MovieDetailViewModel();
   static final FavoritesViewModel _favoritesViewModel = FavoritesViewModel();
@@ -20,8 +20,10 @@ class AppRouter {
         path: '/splash',
         name: 'splash',
         builder:
-            (context, state) =>
-                SplashScreen(onComplete: () => router.go('/welcome')),
+            (context, state) => SplashScreen(
+              homeViewModel: homeViewModel,
+              onComplete: () => router.go('/welcome'),
+            ),
       ),
       GoRoute(
         path: '/welcome',
@@ -53,7 +55,7 @@ class AppRouter {
       GoRoute(
         path: '/',
         name: 'home',
-        builder: (context, state) => HomeScreen(viewModel: _homeViewModel),
+        builder: (context, state) => HomeScreen(viewModel: homeViewModel),
       ),
       GoRoute(
         path: '/movie/:id',

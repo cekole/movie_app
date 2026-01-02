@@ -31,11 +31,18 @@ abstract class MovieDetailViewModelBase with Store {
 
   @action
   Future<void> fetchMovieDetail(int movieId) async {
-    isLoading = true;
     errorMessage = null;
 
     try {
-      movieDetail = await _repository.getMovieDetails(movieId);
+      final cached = await _repository.getCachedMovieDetail(movieId);
+      if (cached != null) {
+        movieDetail = cached;
+        isFavorite = await _repository.isFavorite(movieId);
+        return;
+      }
+
+      isLoading = true;
+      movieDetail = await _repository.getMovieDetailsWithCache(movieId);
       isFavorite = await _repository.isFavorite(movieId);
     } catch (e) {
       errorMessage = e.toString();

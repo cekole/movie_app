@@ -25,4 +25,5 @@ abstract class ApiConfig {
   static const String upcomingEndpoint = '/movie/upcoming';
   static const String movieDetailsEndpoint = '/movie';
   static const String searchEndpoint = '/search/movie';
+  static const String genresEndpoint = '/genre/movie/list';
 }

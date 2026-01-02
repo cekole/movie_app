@@ -56,9 +56,6 @@ abstract class HomeViewModelBase with Store {
     MovieCategory.upcoming: true,
   });
 
-  @observable
-  bool isInitialLoading = true;
-
   @computed
   List<Movie> get currentMovies => movies[selectedCategory]?.toList() ?? [];
 
@@ -71,6 +68,9 @@ abstract class HomeViewModelBase with Store {
   @computed
   bool get hasMoreCurrent => hasMore[selectedCategory] ?? false;
 
+  @computed
+  bool get hasData => movies[MovieCategory.nowPlaying]?.isNotEmpty ?? false;
+
   /// Get movies for a specific category
   List<Movie> getMoviesForCategory(MovieCategory category) {
     return movies[category]?.toList() ?? [];
@@ -81,16 +81,21 @@ abstract class HomeViewModelBase with Store {
     selectedCategory = category;
   }
 
+  /// Set movies directly (called from splash screen after loading)
+  @action
+  void setMoviesForCategory(MovieCategory category, List<Movie> movieList) {
+    movies[category] = ObservableList.of(movieList);
+  }
+
+  /// Fetch all categories from API (used for refresh)
   @action
   Future<void> fetchAllCategories() async {
-    isInitialLoading = true;
     await Future.wait([
       fetchMovies(MovieCategory.nowPlaying, refresh: true),
       fetchMovies(MovieCategory.popular, refresh: true),
       fetchMovies(MovieCategory.topRated, refresh: true),
       fetchMovies(MovieCategory.upcoming, refresh: true),
     ]);
-    isInitialLoading = false;
   }
 
   @action
