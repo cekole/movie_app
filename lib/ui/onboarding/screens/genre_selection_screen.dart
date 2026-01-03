@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:movie_app/ui/core/themes/themes.dart';
 
-import '../../core/themes/app_colors.dart';
 import '../view_model/genre_selection_view_model.dart';
 import '../widgets/continue_button.dart';
+import '../widgets/genre_selection_item.dart';
 
 class GenreSelectionScreen extends StatefulWidget {
   final VoidCallback onContinue;
@@ -104,13 +104,14 @@ class _GenreSelectionScreenState extends State<GenreSelectionScreen> {
 
                     final genres = widget.viewModel.genres;
                     return GridView.builder(
-                      gridDelegate:
-                          const SliverGridDelegateWithFixedCrossAxisCount(
-                            crossAxisCount: 2,
-                            crossAxisSpacing: 32,
-                            mainAxisSpacing: 32,
-                            childAspectRatio: 1,
-                          ),
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing:
+                            MediaQuery.of(context).size.width * 0.1,
+                        mainAxisSpacing:
+                            MediaQuery.of(context).size.width * 0.075,
+                        childAspectRatio: 1,
+                      ),
                       itemCount: genres.length,
                       itemBuilder: (context, index) {
                         final genre = genres[index];
@@ -118,7 +119,7 @@ class _GenreSelectionScreenState extends State<GenreSelectionScreen> {
                           builder: (_) {
                             final isSelected = widget.viewModel.selectedGenreIds
                                 .contains(genre.id);
-                            return _GenreSelectionItem(
+                            return GenreSelectionItem(
                               genreName: genre.name,
                               isSelected: isSelected,
                               onTap:
@@ -132,52 +133,6 @@ class _GenreSelectionScreenState extends State<GenreSelectionScreen> {
                 ),
               ),
             ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _GenreSelectionItem extends StatelessWidget {
-  final String genreName;
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _GenreSelectionItem({
-    required this.genreName,
-    required this.isSelected,
-    required this.onTap,
-  });
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          border: Border.all(
-            color: isSelected ? AppColors.primary : AppColors.grayDark,
-            width: 2,
-          ),
-          color:
-              isSelected
-                  ? AppColors.primary.withValues(alpha: 0.15)
-                  : AppColors.surface,
-        ),
-        child: Center(
-          child: Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text(
-              genreName,
-              textAlign: TextAlign.center,
-              style: TextStyle(
-                color: isSelected ? AppColors.white : AppColors.grayDark,
-                fontSize: 12,
-                fontWeight: isSelected ? FontWeight.bold : FontWeight.normal,
-              ),
-            ),
           ),
         ),
       ),
