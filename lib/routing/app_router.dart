@@ -33,7 +33,6 @@ class AppRouter {
         name: 'welcome',
         builder:
             (context, state) => WelcomeScreen(
-              movies: homeViewModel.getMoviesForCategory(MovieCategory.popular),
               viewModel: _welcomeViewModel,
               onContinue: () => router.go('/genre-selection'),
             ),
