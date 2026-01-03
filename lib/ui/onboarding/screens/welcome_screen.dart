@@ -1,19 +1,23 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 import 'package:movie_app/ui/core/themes/themes.dart';
 
 import '../../../domain/models/movie.dart';
 import '../../core/widgets/inverted_list_wheel_scroll_view.dart';
+import '../view_model/welcome_view_model.dart';
 import '../widgets/continue_button.dart';
 import '../widgets/movie_selection_card.dart';
 
 class WelcomeScreen extends StatefulWidget {
   final VoidCallback onContinue;
   final List<Movie> movies;
+  final WelcomeViewModel viewModel;
 
   const WelcomeScreen({
     super.key,
     required this.onContinue,
     required this.movies,
+    required this.viewModel,
   });
 
   @override
@@ -21,25 +25,12 @@ class WelcomeScreen extends StatefulWidget {
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  final Set<int> _selectedMovieIds = {};
   late final FixedExtentScrollController _scrollController;
-
-  bool get _canContinue => _selectedMovieIds.length >= 3;
 
   @override
   void initState() {
     super.initState();
     _scrollController = FixedExtentScrollController();
-  }
-
-  void _toggleMovie(int movieId) {
-    setState(() {
-      if (_selectedMovieIds.contains(movieId)) {
-        _selectedMovieIds.remove(movieId);
-      } else {
-        _selectedMovieIds.add(movieId);
-      }
-    });
   }
 
   @override
@@ -62,16 +53,25 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
             const SizedBox(height: 40),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  const Text('Welcome', style: AppTextStyles.headline2),
-                  const SizedBox(height: 8),
-                  const Text(
-                    'Choose your 3 favorite movies',
-                    style: AppTextStyles.headline3,
-                  ),
-                ],
+              child: Observer(
+                builder:
+                    (_) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (!widget.viewModel.canContinue)
+                          const Text('Welcome', style: AppTextStyles.headline2),
+                        const SizedBox(height: 8),
+                        widget.viewModel.canContinue
+                            ? Text(
+                              'Continue to next step 👉',
+                              style: AppTextStyles.headline2,
+                            )
+                            : const Text(
+                              'Choose your 3 favorite movies',
+                              style: AppTextStyles.headline3,
+                            ),
+                      ],
+                    ),
               ),
             ),
             const Spacer(),
@@ -92,10 +92,17 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                         quarterTurns: 1,
                         child: SizedBox(
                           width: screenWidth * 0.45,
-                          child: MovieSelectionCard(
-                            movie: movie,
-                            isSelected: _selectedMovieIds.contains(movie.id),
-                            onTap: () => _toggleMovie(movie.id),
+                          child: Observer(
+                            builder:
+                                (_) => MovieSelectionCard(
+                                  movie: movie,
+                                  isSelected: widget.viewModel.selectedMovieIds
+                                      .contains(movie.id),
+                                  onTap:
+                                      () => widget.viewModel.toggleMovie(
+                                        movie.id,
+                                      ),
+                                ),
                           ),
                         ),
                       );
@@ -104,13 +111,18 @@ class _WelcomeScreenState extends State<WelcomeScreen> {
                 ),
               ),
             ),
-
             const Spacer(),
             Padding(
               padding: const EdgeInsets.symmetric(horizontal: 24),
-              child: ContinueButton(
-                enabled: _canContinue,
-                onPressed: widget.onContinue,
+              child: Observer(
+                builder:
+                    (_) => ContinueButton(
+                      enabled: widget.viewModel.canContinue,
+                      onPressed: () async {
+                        await widget.viewModel.saveSelections();
+                        widget.onContinue();
+                      },
+                    ),
               ),
             ),
             const SizedBox(height: 24),

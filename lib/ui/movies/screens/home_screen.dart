@@ -31,6 +31,8 @@ class _HomeScreenState extends State<HomeScreen> {
       _sectionKeys[category] = GlobalKey();
     }
     _scrollController.addListener(_onScroll);
+
+    widget.viewModel.loadUserPreferences();
   }
 
   @override
@@ -130,9 +132,14 @@ class _HomeScreenState extends State<HomeScreen> {
           height: 80,
           child: Observer(
             builder: (_) {
-              final allMovies = widget.viewModel.getMoviesForCategory(
-                MovieCategory.nowPlaying,
-              );
+              final forYouMovies = widget.viewModel.forYouMovies;
+              // Fallback to nowPlaying if forYouMovies is empty
+              final allMovies =
+                  forYouMovies.isNotEmpty
+                      ? forYouMovies
+                      : widget.viewModel.getMoviesForCategory(
+                        MovieCategory.nowPlaying,
+                      );
               return ListView.separated(
                 scrollDirection: Axis.horizontal,
                 padding: const EdgeInsets.symmetric(horizontal: 16.0),

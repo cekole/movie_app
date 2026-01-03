@@ -152,4 +152,30 @@ class MovieRepository {
   Future<MovieDetail?> getCachedMovieDetail(int movieId) async {
     return _cacheService.getCachedMovieDetail(movieId);
   }
+
+  // User Preferences Methods
+
+  Future<void> saveSelectedGenreIds(List<int> genreIds) async {
+    await _localService.saveSelectedGenreIds(genreIds);
+  }
+
+  Future<List<int>> getSelectedGenreIds() async {
+    return _localService.getSelectedGenreIds();
+  }
+
+  Future<void> saveSelectedMovieIds(List<int> movieIds) async {
+    await _localService.saveSelectedMovieIds(movieIds);
+  }
+
+  Future<List<int>> getSelectedMovieIds() async {
+    return _localService.getSelectedMovieIds();
+  }
+
+  Future<void> setOnboardingCompleted(bool completed) async {
+    await _localService.setOnboardingCompleted(completed);
+  }
+
+  Future<bool> isOnboardingCompleted() async {
+    return _localService.isOnboardingCompleted();
+  }
 }
