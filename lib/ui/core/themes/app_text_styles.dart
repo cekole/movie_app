@@ -19,7 +19,7 @@ abstract class AppTextStyles {
 
   static const TextStyle headline3 = TextStyle(
     fontSize: 20,
-    fontWeight: FontWeight.w600,
+    fontWeight: FontWeight.w500,
     color: AppColors.textPrimary,
   );
 

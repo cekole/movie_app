@@ -29,8 +29,10 @@ class AppRouter {
         path: '/welcome',
         name: 'welcome',
         builder:
-            (context, state) =>
-                WelcomeScreen(onContinue: () => router.go('/genre-selection')),
+            (context, state) => WelcomeScreen(
+              movies: homeViewModel.getMoviesForCategory(MovieCategory.popular),
+              onContinue: () => router.go('/genre-selection'),
+            ),
       ),
       GoRoute(
         path: '/genre-selection',
