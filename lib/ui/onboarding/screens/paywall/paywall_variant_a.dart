@@ -170,7 +170,7 @@ class _PaywallVariantAState extends State<PaywallVariantA>
             SizedBox(
               height: responsive.spacingByDevice(
                 phone: 16,
-                tablet: MediaQuery.of(context).size.height * 0.25,
+                tablet: MediaQuery.of(context).size.height * 0.35,
               ),
             ),
 

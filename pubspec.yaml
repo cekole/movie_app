@@ -27,6 +27,9 @@ dependencies:
   cached_network_image: ^3.4.1
   flutter_dotenv: ^6.0.0
 
+  # SVG Support
+  flutter_svg: ^2.0.10+1
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

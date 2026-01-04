@@ -220,7 +220,7 @@ class _PaywallVariantBContent extends StatelessWidget {
           SizedBox(
             height: responsive.spacingByDevice(
               phone: 16,
-              tablet: MediaQuery.of(context).size.height * 0.25,
+              tablet: MediaQuery.of(context).size.height * 0.2,
             ),
           ),
           FadeTransition(
