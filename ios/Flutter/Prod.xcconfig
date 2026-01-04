@@ -1,0 +1,6 @@
+// Prod Flavor Configuration
+FLUTTER_TARGET=lib/main_prod.dart
+PRODUCT_BUNDLE_IDENTIFIER=com.example.movieApp
+DISPLAY_NAME=Movie App
+ASSET_PREFIX=Prod
+ASSETCATALOG_COMPILER_APPICON_NAME=AppIcon-Prod

@@ -1,9 +1,20 @@
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
+import 'flavor_config.dart';
+
 /// API configuration constants
 abstract class ApiConfig {
-  static const String baseUrl = 'https://api.themoviedb.org/3';
-  static const String imageBaseUrl = 'https://image.tmdb.org/t/p';
+  /// Base URL for API calls - injected from flavor configuration.
+  static String get baseUrl =>
+      FlavorConfig.isInitialized
+          ? FlavorConfig.instance.apiBaseUrl
+          : 'https://api.themoviedb.org/3';
+
+  /// Base URL for images - injected from flavor configuration.
+  static String get imageBaseUrl =>
+      FlavorConfig.isInitialized
+          ? FlavorConfig.instance.imageBaseUrl
+          : 'https://image.tmdb.org/t/p';
 
   // TMDB API Read Access Token (loaded from .env file)
   static String get accessToken => dotenv.env['TMDB_ACCESS_TOKEN'] ?? '';
