@@ -50,7 +50,8 @@ class AppRouter {
         path: '/paywall',
         name: 'paywall',
         builder:
-            (context, state) => PaywallScreen(onContinue: () => router.go('/')),
+            (context, state) =>
+                PaywallController(onContinue: () => router.go('/')),
       ),
       GoRoute(
         path: '/',

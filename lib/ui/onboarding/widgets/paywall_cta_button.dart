@@ -6,13 +6,15 @@ class PaywallCTAButton extends StatefulWidget {
   final String text;
   final bool twoLines;
   final bool enableWidthPulse;
+  final bool showArrow;
   final VoidCallback onPressed;
 
   const PaywallCTAButton({
     super.key,
     required this.text,
-    required this.twoLines,
+    this.twoLines = false,
     this.enableWidthPulse = false,
+    this.showArrow = false,
     required this.onPressed,
   });
 
@@ -109,17 +111,32 @@ class _PaywallCTAButtonState extends State<PaywallCTAButton>
                     ),
                   );
                 },
-                child: Text(
-                  widget.text,
-                  key: ValueKey(widget.text),
-                  textAlign: TextAlign.center,
-                  style: const TextStyle(
-                    color: AppColors.white,
-                    fontSize: 17,
-                    fontWeight: FontWeight.bold,
-                    letterSpacing: 0.5,
-                    height: 1.3,
-                  ),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    if (widget.showArrow) Spacer(),
+                    Text(
+                      widget.text,
+                      key: ValueKey(widget.text),
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(
+                        color: AppColors.white,
+                        fontSize: 17,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.5,
+                        height: 1.3,
+                      ),
+                    ),
+                    if (widget.showArrow) ...[
+                      const Spacer(),
+                      const Icon(
+                        Icons.arrow_forward,
+                        color: AppColors.white,
+                        size: 20,
+                      ),
+                    ],
+                  ],
                 ),
               ),
             ),
