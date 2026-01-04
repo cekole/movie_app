@@ -1,2 +1,7 @@
 #include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.release.xcconfig"
 #include "Generated.xcconfig"
+
+// Include flavor-specific config (default to Prod for release builds)
+// Override FLUTTER_FLAVOR in scheme to change
+FLUTTER_FLAVOR=prod
+#include? "Prod.xcconfig"

@@ -1,2 +1,7 @@
 #include? "Pods/Target Support Files/Pods-Runner/Pods-Runner.debug.xcconfig"
 #include "Generated.xcconfig"
+
+// Include flavor-specific config (default to Dev for debug builds)
+// Override FLUTTER_FLAVOR in scheme to change
+FLUTTER_FLAVOR=dev
+#include? "Dev.xcconfig"
