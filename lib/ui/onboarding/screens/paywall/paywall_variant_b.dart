@@ -5,6 +5,7 @@ import 'package:movie_app/ui/core/themes/app_text_styles.dart';
 
 import '../../../../config/ab_testing_config.dart';
 import '../../../core/themes/app_colors.dart';
+import '../../../core/utils/responsive_utils.dart';
 import '../../view_model/paywall_view_model.dart';
 import '../../widgets/auto_renewable_text.dart';
 import '../../widgets/paywall_close_button.dart';
@@ -44,22 +45,31 @@ class _PaywallVariantBState extends State<PaywallVariantB>
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
+    final heroHeightRatio = responsive.ratio(
+      small: 0.4,
+      medium: 0.5,
+      large: 0.55,
+    );
+    final contentTopRatio = responsive.ratio(
+      small: 0.22,
+      medium: 0.3,
+      large: 0.35,
+    );
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: Stack(
         children: [
           SizedBox(
-            height: MediaQuery.of(context).size.height * 0.5,
+            height: responsive.screenHeight * heroHeightRatio,
             width: double.infinity,
             child: Stack(
               fit: StackFit.expand,
               children: [
                 ClipRect(
                   child: Transform.scale(
-                    scale:
-                        MediaQuery.of(context).size.width /
-                        MediaQuery.of(context).size.height *
-                        3,
+                    scale: responsive.screenWidth / responsive.screenHeight * 3,
                     alignment: Alignment.topCenter,
                     child: Image.asset(
                       'assets/images/paywall_hero.png',
@@ -101,7 +111,7 @@ class _PaywallVariantBState extends State<PaywallVariantB>
           ),
           Padding(
             padding: EdgeInsets.only(
-              top: MediaQuery.of(context).size.height * 0.3,
+              top: responsive.screenHeight * contentTopRatio,
             ),
             child: _PaywallVariantBContent(
               viewModel: _viewModel,
@@ -109,6 +119,7 @@ class _PaywallVariantBState extends State<PaywallVariantB>
               slideAnimation: slideAnimation,
               scaleAnimation: scaleAnimation,
               onContinue: widget.onContinue,
+              responsive: responsive,
             ),
           ),
 
@@ -126,6 +137,7 @@ class _PaywallVariantBContent extends StatelessWidget {
   final Animation<Offset> slideAnimation;
   final Animation<double> scaleAnimation;
   final VoidCallback onContinue;
+  final ResponsiveUtils responsive;
 
   const _PaywallVariantBContent({
     required this.viewModel,
@@ -133,13 +145,16 @@ class _PaywallVariantBContent extends StatelessWidget {
     required this.slideAnimation,
     required this.scaleAnimation,
     required this.onContinue,
+    required this.responsive,
   });
 
   @override
   Widget build(BuildContext context) {
     return SingleChildScrollView(
       physics: const BouncingScrollPhysics(),
-      padding: const EdgeInsets.symmetric(horizontal: 24),
+      padding: EdgeInsets.symmetric(
+        horizontal: responsive.horizontalPaddingLarge,
+      ),
       child: Column(
         children: [
           FadeTransition(
@@ -147,12 +162,14 @@ class _PaywallVariantBContent extends StatelessWidget {
             child: Text(
               AppConfig.appName,
               style: AppTextStyles.headline1.copyWith(
-                fontSize: 32,
+                fontSize: responsive.fontSize(small: 26, medium: 32, large: 36),
                 fontWeight: FontWeight.bold,
               ),
             ),
           ),
-          const SizedBox(height: 24),
+          SizedBox(
+            height: responsive.spacing(small: 16, medium: 24, large: 32),
+          ),
           SlideTransition(
             position: slideAnimation,
             child: FadeTransition(
@@ -160,7 +177,9 @@ class _PaywallVariantBContent extends StatelessWidget {
               child: const PaywallFeaturesList(),
             ),
           ),
-          const SizedBox(height: 32),
+          SizedBox(
+            height: responsive.spacing(small: 20, medium: 32, large: 40),
+          ),
           ScaleTransition(
             scale: scaleAnimation,
             child: Observer(
@@ -177,7 +196,13 @@ class _PaywallVariantBContent extends StatelessWidget {
                             () =>
                                 viewModel.selectPlan(SubscriptionPlan.monthly),
                       ),
-                      const SizedBox(height: 12),
+                      SizedBox(
+                        height: responsive.spacing(
+                          small: 8,
+                          medium: 12,
+                          large: 12,
+                        ),
+                      ),
                       SubscriptionOptionVariantB(
                         title: 'Yearly',
                         monthlyPrice: '\$44,99/month',
@@ -192,12 +217,19 @@ class _PaywallVariantBContent extends StatelessWidget {
                   ),
             ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(
+            height: responsive.spacingByDevice(
+              phone: 16,
+              tablet: MediaQuery.of(context).size.height * 0.25,
+            ),
+          ),
           FadeTransition(
             opacity: fadeAnimation,
             child: const AutoRenewableText(),
           ),
-          const SizedBox(height: 16),
+          SizedBox(
+            height: responsive.spacing(small: 10, medium: 16, large: 16),
+          ),
           Observer(
             builder:
                 (_) => PaywallCTAButton(
@@ -206,12 +238,16 @@ class _PaywallVariantBContent extends StatelessWidget {
                   showArrow: true,
                 ),
           ),
-          const SizedBox(height: 16),
+          SizedBox(
+            height: responsive.spacing(small: 10, medium: 16, large: 16),
+          ),
           FadeTransition(
             opacity: fadeAnimation,
             child: const PaywallTermsLinks(),
           ),
-          const SizedBox(height: 24),
+          SizedBox(
+            height: responsive.spacing(small: 16, medium: 24, large: 24),
+          ),
         ],
       ),
     );

@@ -5,6 +5,7 @@ import 'package:movie_app/ui/core/themes/app_text_styles.dart';
 
 import '../../../../config/ab_testing_config.dart';
 import '../../../core/themes/app_colors.dart';
+import '../../../core/utils/responsive_utils.dart';
 import '../../view_model/paywall_view_model.dart';
 import '../../widgets/auto_renewable_text.dart';
 import '../../widgets/feature_comparison_table.dart';
@@ -43,6 +44,8 @@ class _PaywallVariantAState extends State<PaywallVariantA>
 
   @override
   Widget build(BuildContext context) {
+    final responsive = context.responsive;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       appBar: AppBar(
@@ -63,10 +66,14 @@ class _PaywallVariantAState extends State<PaywallVariantA>
       body: SafeArea(
         child: SingleChildScrollView(
           physics: const BouncingScrollPhysics(),
-          padding: const EdgeInsets.symmetric(horizontal: 20),
+          padding: EdgeInsets.symmetric(
+            horizontal: responsive.horizontalPadding,
+          ),
           child: Column(
             children: [
-              const SizedBox(height: 20),
+              SizedBox(
+                height: responsive.spacing(small: 12, medium: 20, large: 28),
+              ),
               // Feature comparison table
               SlideTransition(
                 position: slideAnimation,
@@ -87,7 +94,9 @@ class _PaywallVariantAState extends State<PaywallVariantA>
                   ),
                 ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(
+                height: responsive.spacing(small: 16, medium: 24, large: 32),
+              ),
               SlideTransition(
                 position: slideAnimation,
                 child: FadeTransition(
@@ -101,14 +110,20 @@ class _PaywallVariantAState extends State<PaywallVariantA>
                   ),
                 ),
               ),
-              const SizedBox(height: 20),
+              SizedBox(
+                height: responsive.spacing(small: 12, medium: 20, large: 28),
+              ),
 
               ScaleTransition(
                 scale: scaleAnimation,
                 child: Observer(
                   builder:
                       (_) => Column(
-                        spacing: 16,
+                        spacing: responsive.spacing(
+                          small: 10,
+                          medium: 16,
+                          large: 16,
+                        ),
                         children: [
                           SubscriptionOptionCard(
                             plan: SubscriptionPlan.weekly,
@@ -154,12 +169,21 @@ class _PaywallVariantAState extends State<PaywallVariantA>
                       ),
                 ),
               ),
-              const SizedBox(height: 16),
+
+              SizedBox(
+                height: responsive.spacingByDevice(
+                  phone: 16,
+                  tablet: MediaQuery.of(context).size.height * 0.25,
+                ),
+              ),
+
               FadeTransition(
                 opacity: fadeAnimation,
                 child: const AutoRenewableText(),
               ),
-              const SizedBox(height: 16),
+              SizedBox(
+                height: responsive.spacing(small: 10, medium: 16, large: 16),
+              ),
               Observer(
                 builder:
                     (_) => PaywallCTAButton(
@@ -169,7 +193,9 @@ class _PaywallVariantAState extends State<PaywallVariantA>
                       onPressed: widget.onContinue,
                     ),
               ),
-              const SizedBox(height: 24),
+              SizedBox(
+                height: responsive.spacing(small: 16, medium: 24, large: 24),
+              ),
               FadeTransition(
                 opacity: fadeAnimation,
                 child: const PaywallTermsLinks(),
