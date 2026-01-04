@@ -69,22 +69,6 @@ class _SearchScreenState extends State<SearchScreen> {
             },
           ),
         ),
-        actions: [
-          Observer(
-            builder: (_) {
-              if (widget.viewModel.query.isEmpty) {
-                return const SizedBox.shrink();
-              }
-              return IconButton(
-                icon: const Icon(Icons.clear, color: AppColors.white),
-                onPressed: () {
-                  _searchController.clear();
-                  widget.viewModel.clearSearch();
-                },
-              );
-            },
-          ),
-        ],
       ),
       body: Observer(
         builder: (_) {

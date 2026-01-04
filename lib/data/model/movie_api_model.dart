@@ -39,16 +39,16 @@ class MovieApiModel {
       title: json['title'] as String,
       posterPath: json['poster_path'] as String?,
       backdropPath: json['backdrop_path'] as String?,
-      overview: json['overview'] as String,
-      voteAverage: (json['vote_average'] as num).toDouble(),
-      voteCount: json['vote_count'] as int,
+      overview: json['overview'] as String? ?? '',
+      voteAverage: (json['vote_average'] as num?)?.toDouble() ?? 0.0,
+      voteCount: json['vote_count'] as int? ?? 0,
       releaseDate: json['release_date'] as String?,
       genreIds:
           (json['genre_ids'] as List<dynamic>?)
               ?.map((e) => e as int)
               .toList() ??
           [],
-      popularity: (json['popularity'] as num).toDouble(),
+      popularity: (json['popularity'] as num?)?.toDouble() ?? 0.0,
       adult: json['adult'] as bool? ?? false,
       originalLanguage: json['original_language'] as String? ?? '',
       originalTitle: json['original_title'] as String? ?? '',

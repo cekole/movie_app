@@ -21,7 +21,8 @@ class MovieApiModelV2 {
   final List<CategoryV2> categories; // was: genre_ids (just int list)
   final MetadataV2 metadata; // was: release_date, popularity at root
   final bool isAdult; // was: adult
-  final OriginalInfoV2 original; // was: original_language, original_title at root
+  final OriginalInfoV2
+  original; // was: original_language, original_title at root
   final bool hasVideo; // was: video
 
   const MovieApiModelV2({
@@ -92,7 +93,8 @@ class MovieApiModelV2 {
       voteAverage: ratings.score, // Extract from ratings object
       voteCount: ratings.count, // Extract from ratings object
       releaseDate: metadata.releaseDate, // Extract from metadata
-      genreIds: categories.map((c) => c.id).toList(), // Extract IDs from objects
+      genreIds:
+          categories.map((c) => c.id).toList(), // Extract IDs from objects
       popularity: metadata.popularityScore, // Extract from metadata
     );
   }
@@ -113,11 +115,9 @@ class MovieApiModelV2 {
                 : null,
       ),
       description: movie.overview,
-      ratings: RatingsV2(
-        score: movie.voteAverage,
-        count: movie.voteCount,
-      ),
-      categories: movie.genreIds.map((id) => CategoryV2(id: id, name: '')).toList(),
+      ratings: RatingsV2(score: movie.voteAverage, count: movie.voteCount),
+      categories:
+          movie.genreIds.map((id) => CategoryV2(id: id, name: '')).toList(),
       metadata: MetadataV2(
         releaseDate: movie.releaseDate,
         popularityScore: movie.popularity,
@@ -135,11 +135,7 @@ class MediaAssetsV2 {
   final ImageAssetV2? backdrop;
   final ImageAssetV2? logo;
 
-  const MediaAssetsV2({
-    this.poster,
-    this.backdrop,
-    this.logo,
-  });
+  const MediaAssetsV2({this.poster, this.backdrop, this.logo});
 
   factory MediaAssetsV2.fromJson(Map<String, dynamic> json) {
     return MediaAssetsV2(
@@ -206,11 +202,7 @@ class RatingsV2 {
   final int count; // was: vote_count
   final String? source;
 
-  const RatingsV2({
-    required this.score,
-    required this.count,
-    this.source,
-  });
+  const RatingsV2({required this.score, required this.count, this.source});
 
   factory RatingsV2.fromJson(Map<String, dynamic> json) {
     return RatingsV2(
@@ -221,11 +213,7 @@ class RatingsV2 {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'score': score,
-      'count': count,
-      'source': source,
-    };
+    return {'score': score, 'count': count, 'source': source};
   }
 }
 
@@ -234,10 +222,7 @@ class CategoryV2 {
   final int id;
   final String name;
 
-  const CategoryV2({
-    required this.id,
-    required this.name,
-  });
+  const CategoryV2({required this.id, required this.name});
 
   factory CategoryV2.fromJson(Map<String, dynamic> json) {
     return CategoryV2(
@@ -247,10 +232,7 @@ class CategoryV2 {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'id': id,
-      'name': name,
-    };
+    return {'id': id, 'name': name};
   }
 }
 
@@ -292,10 +274,7 @@ class OriginalInfoV2 {
   final String language; // was: original_language
   final String title; // was: original_title
 
-  const OriginalInfoV2({
-    required this.language,
-    required this.title,
-  });
+  const OriginalInfoV2({required this.language, required this.title});
 
   factory OriginalInfoV2.fromJson(Map<String, dynamic> json) {
     return OriginalInfoV2(
@@ -305,9 +284,6 @@ class OriginalInfoV2 {
   }
 
   Map<String, dynamic> toJson() {
-    return {
-      'language': language,
-      'title': title,
-    };
+    return {'language': language, 'title': title};
   }
 }
