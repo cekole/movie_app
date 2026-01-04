@@ -40,6 +40,7 @@ class _SearchScreenState extends State<SearchScreen> {
       backgroundColor: AppColors.background,
       appBar: AppBar(
         backgroundColor: AppColors.background,
+        scrolledUnderElevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.close, color: AppColors.white),
           onPressed: () => Navigator.pop(context),

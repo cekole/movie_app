@@ -63,145 +63,141 @@ class _PaywallVariantAState extends State<PaywallVariantA>
           ),
         ],
       ),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          padding: EdgeInsets.symmetric(
-            horizontal: responsive.horizontalPadding,
-          ),
-          child: Column(
-            children: [
-              SizedBox(
-                height: responsive.spacing(small: 12, medium: 20, large: 28),
-              ),
-              // Feature comparison table
-              SlideTransition(
-                position: slideAnimation,
-                child: FadeTransition(
-                  opacity: fadeAnimation,
-                  child: Observer(
-                    builder:
-                        (_) => FeatureComparisonTable(
-                          hasDailyMovieSuggestionsPro:
-                              _viewModel.hasDailyMovieSuggestionsPro,
-                          hasAiPoweredInsightsPro:
-                              _viewModel.hasAiPoweredInsightsPro,
-                          hasPersonalizedWatchlistsPro:
-                              _viewModel.hasPersonalizedWatchlistsPro,
-                          hasAdFreeExperiencePro:
-                              _viewModel.hasAdFreeExperiencePro,
-                        ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: responsive.spacing(small: 16, medium: 24, large: 32),
-              ),
-              SlideTransition(
-                position: slideAnimation,
-                child: FadeTransition(
-                  opacity: fadeAnimation,
-                  child: Observer(
-                    builder:
-                        (_) => FreeTrialToggle(
-                          enabled: _viewModel.enableFreeTrial,
-                          onChanged: (value) => _viewModel.setFreeTrial(value),
-                        ),
-                  ),
-                ),
-              ),
-              SizedBox(
-                height: responsive.spacing(small: 12, medium: 20, large: 28),
-              ),
-
-              ScaleTransition(
-                scale: scaleAnimation,
+      body: SingleChildScrollView(
+        physics: const BouncingScrollPhysics(),
+        padding: EdgeInsets.symmetric(horizontal: responsive.horizontalPadding),
+        child: Column(
+          children: [
+            SizedBox(
+              height: responsive.spacing(small: 12, medium: 20, large: 28),
+            ),
+            // Feature comparison table
+            SlideTransition(
+              position: slideAnimation,
+              child: FadeTransition(
+                opacity: fadeAnimation,
                 child: Observer(
                   builder:
-                      (_) => Column(
-                        spacing: responsive.spacing(
-                          small: 10,
-                          medium: 16,
-                          large: 16,
-                        ),
-                        children: [
-                          SubscriptionOptionCard(
-                            plan: SubscriptionPlan.weekly,
-                            title: 'Weekly',
-                            price: '\$4,99 / week',
-                            subtitle: 'Only \$4,99 per week',
-                            isSelected:
-                                _viewModel.selectedPlan ==
-                                SubscriptionPlan.weekly,
-                            onTap:
-                                () => _viewModel.selectPlan(
-                                  SubscriptionPlan.weekly,
-                                ),
-                          ),
-                          SubscriptionOptionCard(
-                            plan: SubscriptionPlan.monthly,
-                            title: 'Monthly',
-                            price: '\$11,99 / month',
-                            subtitle: 'Only \$2,99 per week',
-                            isSelected:
-                                _viewModel.selectedPlan ==
-                                SubscriptionPlan.monthly,
-                            onTap:
-                                () => _viewModel.selectPlan(
-                                  SubscriptionPlan.monthly,
-                                ),
-                          ),
-                          SubscriptionOptionCard(
-                            plan: SubscriptionPlan.yearly,
-                            title: 'Yearly',
-                            price: '\$49,99 / year',
-                            subtitle: 'Only \$0,96 per week',
-                            isSelected:
-                                _viewModel.selectedPlan ==
-                                SubscriptionPlan.yearly,
-                            isBestValue: true,
-                            onTap:
-                                () => _viewModel.selectPlan(
-                                  SubscriptionPlan.yearly,
-                                ),
-                          ),
-                        ],
+                      (_) => FeatureComparisonTable(
+                        hasDailyMovieSuggestionsPro:
+                            _viewModel.hasDailyMovieSuggestionsPro,
+                        hasAiPoweredInsightsPro:
+                            _viewModel.hasAiPoweredInsightsPro,
+                        hasPersonalizedWatchlistsPro:
+                            _viewModel.hasPersonalizedWatchlistsPro,
+                        hasAdFreeExperiencePro:
+                            _viewModel.hasAdFreeExperiencePro,
                       ),
                 ),
               ),
-
-              SizedBox(
-                height: responsive.spacingByDevice(
-                  phone: 16,
-                  tablet: MediaQuery.of(context).size.height * 0.25,
+            ),
+            SizedBox(
+              height: responsive.spacing(small: 8, medium: 12, large: 16),
+            ),
+            SlideTransition(
+              position: slideAnimation,
+              child: FadeTransition(
+                opacity: fadeAnimation,
+                child: Observer(
+                  builder:
+                      (_) => FreeTrialToggle(
+                        enabled: _viewModel.enableFreeTrial,
+                        onChanged: (value) => _viewModel.setFreeTrial(value),
+                      ),
                 ),
               ),
+            ),
+            SizedBox(
+              height: responsive.spacing(small: 12, medium: 20, large: 28),
+            ),
 
-              FadeTransition(
-                opacity: fadeAnimation,
-                child: const AutoRenewableText(),
-              ),
-              SizedBox(
-                height: responsive.spacing(small: 10, medium: 16, large: 16),
-              ),
-              Observer(
+            ScaleTransition(
+              scale: scaleAnimation,
+              child: Observer(
                 builder:
-                    (_) => PaywallCTAButton(
-                      text: _viewModel.ctaButtonText,
-                      twoLines: _viewModel.ctaButtonTwoLines,
-                      enableWidthPulse: _viewModel.enableFreeTrial,
-                      onPressed: widget.onContinue,
+                    (_) => Column(
+                      spacing: responsive.spacing(
+                        small: 10,
+                        medium: 16,
+                        large: 16,
+                      ),
+                      children: [
+                        SubscriptionOptionCard(
+                          plan: SubscriptionPlan.weekly,
+                          title: 'Weekly',
+                          price: '\$4,99 / week',
+                          subtitle: 'Only \$4,99 per week',
+                          isSelected:
+                              _viewModel.selectedPlan ==
+                              SubscriptionPlan.weekly,
+                          onTap:
+                              () => _viewModel.selectPlan(
+                                SubscriptionPlan.weekly,
+                              ),
+                        ),
+                        SubscriptionOptionCard(
+                          plan: SubscriptionPlan.monthly,
+                          title: 'Monthly',
+                          price: '\$11,99 / month',
+                          subtitle: 'Only \$2,99 per week',
+                          isSelected:
+                              _viewModel.selectedPlan ==
+                              SubscriptionPlan.monthly,
+                          onTap:
+                              () => _viewModel.selectPlan(
+                                SubscriptionPlan.monthly,
+                              ),
+                        ),
+                        SubscriptionOptionCard(
+                          plan: SubscriptionPlan.yearly,
+                          title: 'Yearly',
+                          price: '\$49,99 / year',
+                          subtitle: 'Only \$0,96 per week',
+                          isSelected:
+                              _viewModel.selectedPlan ==
+                              SubscriptionPlan.yearly,
+                          isBestValue: true,
+                          onTap:
+                              () => _viewModel.selectPlan(
+                                SubscriptionPlan.yearly,
+                              ),
+                        ),
+                      ],
                     ),
               ),
-              SizedBox(
-                height: responsive.spacing(small: 16, medium: 24, large: 24),
+            ),
+
+            SizedBox(
+              height: responsive.spacingByDevice(
+                phone: 16,
+                tablet: MediaQuery.of(context).size.height * 0.25,
               ),
-              FadeTransition(
-                opacity: fadeAnimation,
-                child: const PaywallTermsLinks(),
-              ),
-            ],
-          ),
+            ),
+
+            FadeTransition(
+              opacity: fadeAnimation,
+              child: const AutoRenewableText(),
+            ),
+            SizedBox(
+              height: responsive.spacing(small: 10, medium: 16, large: 16),
+            ),
+            Observer(
+              builder:
+                  (_) => PaywallCTAButton(
+                    text: _viewModel.ctaButtonText,
+                    twoLines: _viewModel.ctaButtonTwoLines,
+                    enableWidthPulse: _viewModel.enableFreeTrial,
+                    onPressed: widget.onContinue,
+                  ),
+            ),
+            SizedBox(
+              height: responsive.spacing(small: 16, medium: 24, large: 24),
+            ),
+            FadeTransition(
+              opacity: fadeAnimation,
+              child: const PaywallTermsLinks(),
+            ),
+          ],
         ),
       ),
     );

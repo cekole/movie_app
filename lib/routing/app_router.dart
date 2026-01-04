@@ -1,5 +1,6 @@
 import 'package:go_router/go_router.dart';
 
+import '../data/services/local_storage_service.dart';
 import '../ui/movies/screens/screens.dart';
 import '../ui/movies/view_model/view_model.dart';
 import '../ui/onboarding/onboarding.dart';
@@ -16,6 +17,18 @@ class AppRouter {
       GenreSelectionViewModel();
   static final WelcomeViewModel _welcomeViewModel = WelcomeViewModel();
 
+  static final LocalStorageService _localStorageService = LocalStorageService();
+
+  static Future<void> _handleSplashComplete() async {
+    final isOnboardingCompleted =
+        await _localStorageService.isOnboardingCompleted();
+    if (isOnboardingCompleted) {
+      router.go('/paywall');
+    } else {
+      router.go('/welcome');
+    }
+  }
+
   static final GoRouter router = GoRouter(
     initialLocation: '/splash',
     routes: [
@@ -25,7 +38,7 @@ class AppRouter {
         builder:
             (context, state) => SplashScreen(
               homeViewModel: homeViewModel,
-              onComplete: () => router.go('/welcome'),
+              onComplete: _handleSplashComplete,
             ),
       ),
       GoRoute(

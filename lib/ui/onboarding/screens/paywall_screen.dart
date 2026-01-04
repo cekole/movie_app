@@ -95,6 +95,7 @@ class _PaywallScreenState extends State<PaywallScreen>
       appBar: AppBar(
         backgroundColor: AppColors.background,
         elevation: 0,
+        scrolledUnderElevation: 0,
         centerTitle: true,
         title: const Text(AppConfig.appName, style: AppTextStyles.headline2),
         actions: [

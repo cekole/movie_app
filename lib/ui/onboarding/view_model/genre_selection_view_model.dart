@@ -84,9 +84,10 @@ abstract class GenreSelectionViewModelBase with Store {
     selectedGenreIds.clear();
   }
 
-  /// Save selected genres to local storage
+  /// Save selected genres to local storage and mark onboarding as completed
   @action
   Future<void> saveSelections() async {
     await _repository.saveSelectedGenreIds(selectedGenreIds.toList());
+    await _repository.setOnboardingCompleted(true);
   }
 }
