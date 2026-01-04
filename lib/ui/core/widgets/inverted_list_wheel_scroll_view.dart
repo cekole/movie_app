@@ -1,4 +1,7 @@
 import 'package:flutter/widgets.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+
+import '../../onboarding/view_model/inverted_list_wheel_scroll_view_view_model.dart';
 
 /// A ListWheelScrollView that allows negative perspective values.
 /// Positive: items curve away from viewer at edges (convex)
@@ -33,7 +36,8 @@ class InvertedListWheelScrollView extends StatefulWidget {
 class _InvertedListWheelScrollViewState
     extends State<InvertedListWheelScrollView> {
   late FixedExtentScrollController _controller;
-  double _scrollOffset = 0;
+  final InvertedListWheelScrollViewViewModel _viewModel =
+      InvertedListWheelScrollViewViewModel();
 
   @override
   void initState() {
@@ -62,9 +66,7 @@ class _InvertedListWheelScrollViewState
   }
 
   void _onScroll() {
-    setState(() {
-      _scrollOffset = _controller.offset;
-    });
+    _viewModel.updateScrollOffset(_controller.offset);
   }
 
   @override
@@ -87,27 +89,37 @@ class _InvertedListWheelScrollViewState
     }
 
     // Negative perspective - apply inverted transforms per child
-    return ListWheelScrollView.useDelegate(
-      controller: _controller,
-      itemExtent: widget.itemExtent,
-      diameterRatio: widget.diameterRatio,
-      perspective: 0.000001, // Minimal base perspective
-      offAxisFraction: widget.offAxisFraction,
-      physics: widget.physics,
-      clipBehavior: widget.clipBehavior,
-      childDelegate: ListWheelChildBuilderDelegate(
-        childCount: widget.childDelegate.estimatedChildCount,
-        builder: (context, index) {
-          final child = widget.childDelegate.build(context, index);
-          if (child == null) return null;
+    return Observer(
+      builder:
+          (_) => ListWheelScrollView.useDelegate(
+            controller: _controller,
+            itemExtent: widget.itemExtent,
+            diameterRatio: widget.diameterRatio,
+            perspective: 0.000001, // Minimal base perspective
+            offAxisFraction: widget.offAxisFraction,
+            physics: widget.physics,
+            clipBehavior: widget.clipBehavior,
+            childDelegate: ListWheelChildBuilderDelegate(
+              childCount: widget.childDelegate.estimatedChildCount,
+              builder: (context, index) {
+                final child = widget.childDelegate.build(context, index);
+                if (child == null) return null;
 
-          // Calculate distance from center
-          final centerIndex = _scrollOffset / widget.itemExtent;
-          final distanceFromCenter = (index - centerIndex).clamp(-3.0, 3.0);
+                // Calculate distance from center
+                final centerIndex = _viewModel.scrollOffset / widget.itemExtent;
+                final distanceFromCenter = (index - centerIndex).clamp(
+                  -3.0,
+                  3.0,
+                );
 
-          return _buildInvertedChild(child, distanceFromCenter, absPerspective);
-        },
-      ),
+                return _buildInvertedChild(
+                  child,
+                  distanceFromCenter,
+                  absPerspective,
+                );
+              },
+            ),
+          ),
     );
   }
 

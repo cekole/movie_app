@@ -1,7 +1,8 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
 
 import '../../../../config/ab_testing_config.dart';
-import '../../../../data/services/ab_testing_service.dart';
+import '../../view_model/paywall_controller_view_model.dart';
 import 'paywall_variant_a.dart';
 import 'paywall_variant_b.dart';
 
@@ -50,45 +51,30 @@ class PaywallController extends StatefulWidget {
 }
 
 class _PaywallControllerState extends State<PaywallController> {
-  PaywallVariant? _variant;
-  bool _isLoading = true;
+  final PaywallControllerViewModel _viewModel = PaywallControllerViewModel();
 
   @override
   void initState() {
     super.initState();
-    _loadVariant();
-  }
-
-  Future<void> _loadVariant() async {
-    if (widget.forcedVariant != null) {
-      setState(() {
-        _variant = widget.forcedVariant;
-        _isLoading = false;
-      });
-      return;
-    }
-
-    final variant = await ABTestingService.instance.getPaywallVariant();
-    if (mounted) {
-      setState(() {
-        _variant = variant;
-        _isLoading = false;
-      });
-    }
+    _viewModel.loadVariant(forcedVariant: widget.forcedVariant);
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_isLoading || _variant == null) {
-      return const Scaffold(
-        backgroundColor: Colors.black,
-        body: Center(child: CircularProgressIndicator()),
-      );
-    }
+    return Observer(
+      builder: (_) {
+        if (_viewModel.isLoading || _viewModel.variant == null) {
+          return const Scaffold(
+            backgroundColor: Colors.black,
+            body: Center(child: CircularProgressIndicator()),
+          );
+        }
 
-    return PaywallVariantFactory.create(
-      variant: _variant!,
-      onContinue: widget.onContinue,
+        return PaywallVariantFactory.create(
+          variant: _viewModel.variant!,
+          onContinue: widget.onContinue,
+        );
+      },
     );
   }
 }
