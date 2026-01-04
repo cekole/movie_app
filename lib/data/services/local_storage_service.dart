@@ -71,4 +71,52 @@ class LocalStorageService {
     final preferences = await prefs;
     await preferences.remove(AppConfig.favoritesKey);
   }
+
+  // User Preferences Methods
+
+  /// Save selected genre IDs from onboarding
+  Future<void> saveSelectedGenreIds(List<int> genreIds) async {
+    final preferences = await prefs;
+    await preferences.setStringList(
+      AppConfig.selectedGenreIdsKey,
+      genreIds.map((id) => id.toString()).toList(),
+    );
+  }
+
+  /// Get selected genre IDs
+  Future<List<int>> getSelectedGenreIds() async {
+    final preferences = await prefs;
+    final genreIds =
+        preferences.getStringList(AppConfig.selectedGenreIdsKey) ?? [];
+    return genreIds.map((id) => int.parse(id)).toList();
+  }
+
+  /// Save selected movie IDs from onboarding
+  Future<void> saveSelectedMovieIds(List<int> movieIds) async {
+    final preferences = await prefs;
+    await preferences.setStringList(
+      AppConfig.selectedMovieIdsKey,
+      movieIds.map((id) => id.toString()).toList(),
+    );
+  }
+
+  /// Get selected movie IDs
+  Future<List<int>> getSelectedMovieIds() async {
+    final preferences = await prefs;
+    final movieIds =
+        preferences.getStringList(AppConfig.selectedMovieIdsKey) ?? [];
+    return movieIds.map((id) => int.parse(id)).toList();
+  }
+
+  /// Mark onboarding as completed
+  Future<void> setOnboardingCompleted(bool completed) async {
+    final preferences = await prefs;
+    await preferences.setBool(AppConfig.onboardingCompletedKey, completed);
+  }
+
+  /// Check if onboarding is completed
+  Future<bool> isOnboardingCompleted() async {
+    final preferences = await prefs;
+    return preferences.getBool(AppConfig.onboardingCompletedKey) ?? false;
+  }
 }

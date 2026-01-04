@@ -12,6 +12,9 @@ class AppRouter {
       MovieDetailViewModel();
   static final FavoritesViewModel _favoritesViewModel = FavoritesViewModel();
   static final SearchViewModel _searchViewModel = SearchViewModel();
+  static final GenreSelectionViewModel _genreSelectionViewModel =
+      GenreSelectionViewModel();
+  static final WelcomeViewModel _welcomeViewModel = WelcomeViewModel();
 
   static final GoRouter router = GoRouter(
     initialLocation: '/splash',
@@ -29,22 +32,19 @@ class AppRouter {
         path: '/welcome',
         name: 'welcome',
         builder:
-            (context, state) =>
-                WelcomeScreen(onContinue: () => router.go('/genre-selection')),
+            (context, state) => WelcomeScreen(
+              viewModel: _welcomeViewModel,
+              onContinue: () => router.go('/genre-selection'),
+            ),
       ),
       GoRoute(
         path: '/genre-selection',
         name: 'genreSelection',
         builder:
-            (context, state) =>
-                GenreSelectionScreen(onContinue: () => router.go('/thank-you')),
-      ),
-      GoRoute(
-        path: '/thank-you',
-        name: 'thankYou',
-        builder:
-            (context, state) =>
-                ThankYouScreen(onContinue: () => router.go('/paywall')),
+            (context, state) => GenreSelectionScreen(
+              viewModel: _genreSelectionViewModel,
+              onContinue: () => router.go('/paywall'),
+            ),
       ),
       GoRoute(
         path: '/paywall',

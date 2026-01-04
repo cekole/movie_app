@@ -18,26 +18,20 @@ class ContinueButton extends StatelessWidget {
   Widget build(BuildContext context) {
     return SizedBox(
       width: double.infinity,
-      height: 56,
+      height: MediaQuery.of(context).size.height * 0.07,
       child: ElevatedButton(
         onPressed: enabled ? onPressed : null,
         style: ElevatedButton.styleFrom(
-          backgroundColor:
-              enabled
-                  ? AppColors.primary
-                  : AppColors.primary.withValues(alpha: 0.5),
-          disabledBackgroundColor: AppColors.primary.withValues(alpha: 0.5),
+          backgroundColor: AppColors.primary,
+          disabledBackgroundColor: AppColors.redDark,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(16),
           ),
         ),
         child: Text(
           text,
           style: TextStyle(
-            color:
-                enabled
-                    ? AppColors.white
-                    : AppColors.white.withValues(alpha: 0.5),
+            color: enabled ? AppColors.white : AppColors.gray,
             fontSize: 16,
             fontWeight: FontWeight.bold,
           ),

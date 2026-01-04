@@ -56,6 +56,16 @@ abstract class HomeViewModelBase with Store {
     MovieCategory.upcoming: true,
   });
 
+  // User preferences
+  @observable
+  ObservableList<int> selectedGenreIds = ObservableList<int>();
+
+  @observable
+  ObservableList<int> selectedMovieIds = ObservableList<int>();
+
+  @observable
+  ObservableList<Movie> forYouMovies = ObservableList<Movie>();
+
   @computed
   List<Movie> get currentMovies => movies[selectedCategory]?.toList() ?? [];
 
@@ -76,6 +86,11 @@ abstract class HomeViewModelBase with Store {
     return movies[category]?.toList() ?? [];
   }
 
+  /// Get personalized "For You" movies based on user preferences
+  List<Movie> getForYouMovies() {
+    return forYouMovies.toList();
+  }
+
   @action
   void setCategory(MovieCategory category) {
     selectedCategory = category;
@@ -87,6 +102,65 @@ abstract class HomeViewModelBase with Store {
     movies[category] = ObservableList.of(movieList);
   }
 
+  /// Load user preferences from storage
+  @action
+  Future<void> loadUserPreferences() async {
+    final genreIds = await _repository.getSelectedGenreIds();
+    final movieIds = await _repository.getSelectedMovieIds();
+
+    selectedGenreIds = ObservableList.of(genreIds);
+    selectedMovieIds = ObservableList.of(movieIds);
+
+    _buildForYouList();
+  }
+
+  @action
+  void _buildForYouList() {
+    final allMovies = <Movie>[];
+
+    for (final category in MovieCategory.values) {
+      allMovies.addAll(movies[category] ?? []);
+    }
+
+    // Remove duplicates based on movie ID
+    final uniqueMovies = <int, Movie>{};
+    for (final movie in allMovies) {
+      uniqueMovies[movie.id] = movie;
+    }
+
+    final movieList = uniqueMovies.values.toList();
+
+    final selectedMovies = <Movie>[];
+    final genreMatchedMovies = <Movie>[];
+    final otherMovies = <Movie>[];
+
+    for (final movie in movieList) {
+      if (selectedMovieIds.contains(movie.id)) {
+        selectedMovies.add(movie);
+      } else if (selectedGenreIds.isNotEmpty &&
+          movie.genreIds.any((id) => selectedGenreIds.contains(id))) {
+        genreMatchedMovies.add(movie);
+      } else {
+        otherMovies.add(movie);
+      }
+    }
+
+    genreMatchedMovies.sort((a, b) {
+      final aMatches =
+          a.genreIds.where((id) => selectedGenreIds.contains(id)).length;
+      final bMatches =
+          b.genreIds.where((id) => selectedGenreIds.contains(id)).length;
+      return bMatches.compareTo(aMatches);
+    });
+
+    // Selected movies first, then genre-matched, then others
+    forYouMovies = ObservableList.of([
+      ...selectedMovies,
+      ...genreMatchedMovies,
+      ...otherMovies,
+    ]);
+  }
+
   /// Fetch all categories from API (used for refresh)
   @action
   Future<void> fetchAllCategories() async {
@@ -96,6 +170,8 @@ abstract class HomeViewModelBase with Store {
       fetchMovies(MovieCategory.topRated, refresh: true),
       fetchMovies(MovieCategory.upcoming, refresh: true),
     ]);
+    // Rebuild "For You" list after fetching
+    _buildForYouList();
   }
 
   @action

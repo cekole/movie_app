@@ -1,142 +1,155 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_mobx/flutter_mobx.dart';
+import 'package:movie_app/ui/core/themes/themes.dart';
 
-import '../../core/themes/app_colors.dart';
+import '../../core/widgets/inverted_list_wheel_scroll_view.dart';
+import '../view_model/welcome_view_model.dart';
 import '../widgets/continue_button.dart';
+import '../widgets/movie_selection_card.dart';
 
 class WelcomeScreen extends StatefulWidget {
   final VoidCallback onContinue;
+  final WelcomeViewModel viewModel;
 
-  const WelcomeScreen({super.key, required this.onContinue});
+  const WelcomeScreen({
+    super.key,
+    required this.onContinue,
+    required this.viewModel,
+  });
 
   @override
   State<WelcomeScreen> createState() => _WelcomeScreenState();
 }
 
 class _WelcomeScreenState extends State<WelcomeScreen> {
-  final Set<int> _selectedMovies = {};
+  late final FixedExtentScrollController _scrollController;
 
-  bool get _canContinue => _selectedMovies.length >= 3;
+  @override
+  void initState() {
+    super.initState();
+    _scrollController = FixedExtentScrollController();
+    _scrollController.addListener(_onScroll);
+    widget.viewModel.initialize();
+  }
 
-  void _toggleMovie(int index) {
-    setState(() {
-      if (_selectedMovies.contains(index)) {
-        _selectedMovies.remove(index);
-      } else {
-        _selectedMovies.add(index);
-      }
-    });
+  void _onScroll() {
+    final movies = widget.viewModel.movies;
+    if (movies.isEmpty) return;
+
+    final currentIndex = _scrollController.selectedItem;
+    // Load more when user is near the end
+    if (currentIndex >= movies.length - 5 &&
+        !widget.viewModel.isLoading &&
+        widget.viewModel.hasMore) {
+      widget.viewModel.loadMore();
+    }
+  }
+
+  @override
+  void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
+    super.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
+    final screenWidth = MediaQuery.of(context).size.width;
+    final screenHeight = MediaQuery.of(context).size.height;
+
     return Scaffold(
       backgroundColor: AppColors.background,
       body: SafeArea(
-        child: Padding(
-          padding: const EdgeInsets.all(24),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              const SizedBox(height: 40),
-              const Text(
-                'Welcome',
-                style: TextStyle(
-                  color: AppColors.white,
-                  fontSize: 28,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              const SizedBox(height: 8),
-              const Text(
-                'Choose your 3 favorite movies',
-                style: TextStyle(color: AppColors.grayDark, fontSize: 16),
-              ),
-              const SizedBox(height: 40),
-              Expanded(
-                child: GridView.builder(
-                  gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
-                    crossAxisCount: 3,
-                    crossAxisSpacing: 16,
-                    mainAxisSpacing: 16,
-                    childAspectRatio: 0.75,
-                  ),
-                  itemCount: 9,
-                  itemBuilder: (context, index) {
-                    final isSelected = _selectedMovies.contains(index);
-                    return _MovieSelectionItem(
-                      isSelected: isSelected,
-                      onTap: () => _toggleMovie(index),
-                    );
-                  },
-                ),
-              ),
-              const SizedBox(height: 24),
-              ContinueButton(
-                enabled: _canContinue,
-                onPressed: widget.onContinue,
-              ),
-            ],
-          ),
-        ),
-      ),
-    );
-  }
-}
-
-class _MovieSelectionItem extends StatelessWidget {
-  final bool isSelected;
-  final VoidCallback onTap;
-
-  const _MovieSelectionItem({required this.isSelected, required this.onTap});
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Column(
-        children: [
-          Expanded(
-            child: Stack(
-              children: [
-                Container(
-                  decoration: BoxDecoration(
-                    shape: BoxShape.circle,
-                    border: Border.all(
-                      color:
-                          isSelected ? AppColors.primary : AppColors.grayDark,
-                      width: 2,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            const SizedBox(height: 40),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Observer(
+                builder:
+                    (_) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (!widget.viewModel.canContinue)
+                          const Text('Welcome', style: AppTextStyles.headline2),
+                        const SizedBox(height: 8),
+                        widget.viewModel.canContinue
+                            ? Text(
+                              'Continue to next step 👉',
+                              style: AppTextStyles.headline2,
+                            )
+                            : const Text(
+                              'Choose your 3 favorite movies',
+                              style: AppTextStyles.headline3,
+                            ),
+                      ],
                     ),
-                    color: AppColors.surface,
-                  ),
-                  child: const Center(
-                    child: Text(
-                      'Image',
-                      style: TextStyle(color: AppColors.grayDark, fontSize: 12),
-                    ),
-                  ),
-                ),
-                if (isSelected)
-                  Positioned(
-                    right: 0,
-                    bottom: 0,
-                    child: Container(
-                      width: 24,
-                      height: 24,
-                      decoration: const BoxDecoration(
-                        shape: BoxShape.circle,
-                        color: AppColors.primary,
-                      ),
-                      child: const Icon(
-                        Icons.favorite,
-                        color: AppColors.white,
-                        size: 14,
-                      ),
-                    ),
-                  ),
-              ],
+              ),
             ),
-          ),
-        ],
+            const Spacer(),
+            Observer(
+              builder: (_) {
+                final movies = widget.viewModel.movies;
+                return SizedBox(
+                  height: screenHeight * 0.5,
+                  child:
+                      movies.isEmpty
+                          ? const Center(child: CircularProgressIndicator())
+                          : RotatedBox(
+                            quarterTurns: -1,
+                            child: InvertedListWheelScrollView.useDelegate(
+                              controller: _scrollController,
+                              itemExtent: screenWidth * 0.5,
+                              perspective: -0.0004,
+                              physics: const FixedExtentScrollPhysics(),
+                              childDelegate: ListWheelChildBuilderDelegate(
+                                childCount: movies.length,
+                                builder: (context, index) {
+                                  final movie = movies[index];
+                                  return RotatedBox(
+                                    quarterTurns: 1,
+                                    child: SizedBox(
+                                      width: screenWidth * 0.45,
+                                      child: Observer(
+                                        builder:
+                                            (_) => MovieSelectionCard(
+                                              movie: movie,
+                                              isSelected: widget
+                                                  .viewModel
+                                                  .selectedMovieIds
+                                                  .contains(movie.id),
+                                              onTap:
+                                                  () => widget.viewModel
+                                                      .toggleMovie(movie.id),
+                                            ),
+                                      ),
+                                    ),
+                                  );
+                                },
+                              ),
+                            ),
+                          ),
+                );
+              },
+            ),
+            const Spacer(),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Observer(
+                builder:
+                    (_) => ContinueButton(
+                      enabled: widget.viewModel.canContinue,
+                      onPressed: () async {
+                        await widget.viewModel.saveSelections();
+                        widget.onContinue();
+                      },
+                    ),
+              ),
+            ),
+            const SizedBox(height: 24),
+          ],
+        ),
       ),
     );
   }
