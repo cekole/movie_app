@@ -2,6 +2,15 @@
 
 A Flutter movie application using TMDB API.
 
+
+## Default Paywall 
+
+https://github.com/user-attachments/assets/227193f4-be09-423f-9a1c-351ed700f94c
+
+## Alternative Paywall Variant
+
+https://github.com/user-attachments/assets/c1e9e9e6-27af-4772-ad30-f7472488513d
+
 ## Build Info
 
 - **Version**: 0.1.0
